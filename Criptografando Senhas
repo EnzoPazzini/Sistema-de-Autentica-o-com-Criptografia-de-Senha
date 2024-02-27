@@ -1,0 +1,24 @@
+from flask import Flask, request
+from flask_bcrypt import Bcrypt
+
+app = Flask(__name__)
+bcrypt = Bcrypt(app)
+
+@app.route('/register', methods=['POST'])
+def register():
+    password = request.form['password']
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    # Salvar hashed_password no banco de dados
+    return 'Senha registrada com sucesso!'
+
+@app.route('/login', methods=['POST'])
+def login():
+    password = request.form['password']
+    # Recuperar hashed_password do banco de dados
+    if bcrypt.check_password_hash(hashed_password, password):
+        return 'Login bem-sucedido!'
+    else:
+        return 'Credenciais inválidas.'
+
+if __name__ == '__main__':
+    app.run(debug=True)
